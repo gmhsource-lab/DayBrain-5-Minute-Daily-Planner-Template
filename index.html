@@ -1,0 +1,800 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DayBrain Daily Planning Template — Free</title>
+<meta name="description" content="A free daily planning template for solo professionals, freelancers and founders. Built around the 5-minute planning framework. Web app + printable PDF.">
+<meta property="og:title" content="DayBrain Daily Planning Template — Free">
+<meta property="og:description" content="Stop drowning in task lists. Plan your day in 5 minutes. Free interactive template + printable PDF.">
+<meta property="og:url" content="https://daybrain.github.io/daily-planner-template">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --gold:       #C9A84C;
+    --gold-light: #E8C96A;
+    --gold-dim:   rgba(201,168,76,0.12);
+    --gold-rule:  rgba(201,168,76,0.25);
+    --bg:         #0C0C0B;
+    --bg2:        #131311;
+    --bg3:        #1A1A17;
+    --text:       #EAE6DC;
+    --text-mid:   #B8B4AA;
+    --text-dim:   #6A6860;
+    --rule:       rgba(255,255,255,0.06);
+  }
+
+  *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 300;
+    overflow-x: hidden;
+  }
+
+  /* ── NOISE TEXTURE OVERLAY ── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 48px;
+    border-bottom: 1px solid transparent;
+    transition: all 0.3s;
+  }
+  nav.scrolled {
+    background: rgba(12,12,11,0.92);
+    backdrop-filter: blur(12px);
+    border-bottom-color: var(--rule);
+  }
+  .nav-logo {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.3rem;
+    font-weight: 400;
+    color: var(--gold);
+    text-decoration: none;
+    letter-spacing: 0.02em;
+  }
+  .nav-links { display: flex; align-items: center; gap: 32px; }
+  .nav-links a {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.68rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--text); }
+  .nav-cta {
+    background: var(--gold) !important;
+    color: var(--bg) !important;
+    padding: 8px 20px !important;
+    font-family: 'DM Sans', sans-serif !important;
+    font-size: 0.78rem !important;
+    font-weight: 500 !important;
+    letter-spacing: 0 !important;
+    text-transform: none !important;
+    transition: background 0.2s !important;
+  }
+  .nav-cta:hover { background: var(--gold-light) !important; }
+
+  /* ── HERO ── */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 120px 48px 80px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* radial glow */
+  .hero::after {
+    content: '';
+    position: absolute;
+    top: 30%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, rgba(201,168,76,0.06) 0%, transparent 65%);
+    pointer-events: none;
+  }
+
+  .hero-eyebrow {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 24px;
+    opacity: 0;
+    animation: fadeUp 0.6s 0.1s ease both;
+  }
+
+  .hero-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(3rem, 8vw, 6.5rem);
+    font-weight: 300;
+    line-height: 1.0;
+    color: var(--text);
+    margin-bottom: 12px;
+    opacity: 0;
+    animation: fadeUp 0.7s 0.2s ease both;
+  }
+  .hero-title em {
+    font-style: italic;
+    color: var(--gold);
+  }
+
+  .hero-sub {
+    font-size: 1.05rem;
+    color: var(--text-mid);
+    max-width: 480px;
+    margin: 20px auto 40px;
+    line-height: 1.7;
+    font-weight: 300;
+    opacity: 0;
+    animation: fadeUp 0.7s 0.35s ease both;
+  }
+
+  .hero-actions {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    justify-content: center;
+    opacity: 0;
+    animation: fadeUp 0.7s 0.5s ease both;
+  }
+  .btn-primary {
+    background: var(--gold);
+    color: var(--bg);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 500;
+    font-size: 0.9rem;
+    padding: 14px 32px;
+    text-decoration: none;
+    display: inline-block;
+    transition: background 0.2s, transform 0.2s;
+  }
+  .btn-primary:hover { background: var(--gold-light); transform: translateY(-1px); }
+  .btn-secondary {
+    background: transparent;
+    color: var(--text-mid);
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 14px 28px;
+    text-decoration: none;
+    border: 1px solid var(--rule);
+    display: inline-block;
+    transition: all 0.2s;
+  }
+  .btn-secondary:hover { border-color: var(--gold-rule); color: var(--text); }
+
+  .hero-footnote {
+    margin-top: 20px;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.6rem;
+    color: var(--text-dim);
+    letter-spacing: 0.1em;
+    opacity: 0;
+    animation: fadeUp 0.7s 0.65s ease both;
+  }
+
+  /* ── PREVIEW MOCKUP ── */
+  .preview-wrap {
+    margin-top: 80px;
+    padding: 0 48px;
+    max-width: 900px;
+    margin-left: auto;
+    margin-right: auto;
+    position: relative;
+    z-index: 1;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.7s ease both;
+  }
+  .preview-frame {
+    background: var(--bg2);
+    border: 1px solid var(--rule);
+    border-top: 2px solid var(--gold);
+    padding: 32px;
+    position: relative;
+  }
+  .preview-frame::before {
+    content: '● ● ●';
+    position: absolute;
+    top: -18px;
+    left: 16px;
+    font-size: 8px;
+    letter-spacing: 6px;
+    color: var(--text-dim);
+  }
+  .preview-inner {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+  .preview-block { }
+  .preview-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .preview-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--gold-rule);
+  }
+  .preview-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 12px;
+    background: var(--bg3);
+    border: 1px solid rgba(255,255,255,0.04);
+    margin-bottom: 4px;
+  }
+  .preview-row.gold { border-left: 2px solid var(--gold); }
+  .preview-box-sq {
+    width: 12px; height: 12px;
+    border: 1px solid var(--gold-rule);
+    flex-shrink: 0;
+  }
+  .preview-line {
+    height: 7px;
+    background: rgba(255,255,255,0.07);
+    border-radius: 2px;
+    flex: 1;
+  }
+  .preview-line.short { flex: 0 0 40%; }
+  .preview-line.gold-line { background: rgba(201,168,76,0.2); }
+  .preview-time-row {
+    display: grid;
+    grid-template-columns: 36px 1fr;
+    gap: 0;
+    margin-bottom: 3px;
+  }
+  .preview-time {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.55rem;
+    color: var(--text-dim);
+    padding: 6px 0;
+    border-right: 1px solid var(--rule);
+  }
+  .preview-slot {
+    background: var(--bg3);
+    border: 1px solid rgba(255,255,255,0.03);
+    border-left: none;
+    height: 22px;
+  }
+  .preview-dump {
+    background: var(--bg3);
+    border: 1px solid rgba(255,255,255,0.04);
+    height: 52px;
+    margin-bottom: 4px;
+  }
+
+  /* ── DIVIDER ── */
+  .section-divider {
+    max-width: 900px;
+    margin: 80px auto;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--gold-rule), transparent);
+  }
+
+  /* ── WHAT'S INSIDE ── */
+  .features {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 0 48px 80px;
+    position: relative;
+    z-index: 1;
+  }
+  .features-eyebrow {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 16px;
+    text-align: center;
+  }
+  .features-heading {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(2rem, 4vw, 3rem);
+    font-weight: 300;
+    text-align: center;
+    margin-bottom: 56px;
+    line-height: 1.15;
+  }
+  .features-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2px;
+  }
+  .feature-card {
+    background: var(--bg2);
+    padding: 32px 28px;
+    border: 1px solid var(--rule);
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.25s;
+  }
+  .feature-card:hover { border-color: var(--gold-rule); }
+  .feature-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 2px;
+    background: var(--gold);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.3s ease;
+  }
+  .feature-card:hover::before { transform: scaleX(1); }
+  .feature-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2.5rem;
+    font-weight: 300;
+    color: var(--gold-rule);
+    line-height: 1;
+    margin-bottom: 16px;
+  }
+  .feature-title {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--text);
+    margin-bottom: 10px;
+  }
+  .feature-desc {
+    font-size: 0.82rem;
+    color: var(--text-dim);
+    line-height: 1.65;
+    font-weight: 300;
+  }
+
+  /* ── TWO FORMATS ── */
+  .formats {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 0 48px 80px;
+    position: relative;
+    z-index: 1;
+  }
+  .formats-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  .format-card {
+    background: var(--bg2);
+    border: 1px solid var(--rule);
+    padding: 40px 36px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    transition: border-color 0.25s;
+  }
+  .format-card:hover { border-color: var(--gold-rule); }
+  .format-icon {
+    font-family: 'DM Mono', monospace;
+    font-size: 1.8rem;
+    color: var(--gold);
+    line-height: 1;
+  }
+  .format-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.5rem;
+    font-weight: 400;
+  }
+  .format-desc {
+    font-size: 0.85rem;
+    color: var(--text-mid);
+    line-height: 1.65;
+    font-weight: 300;
+    flex: 1;
+  }
+  .format-tags {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.1em;
+    color: var(--text-dim);
+    border: 1px solid var(--rule);
+    padding: 4px 10px;
+  }
+  .format-link {
+    display: inline-block;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+    color: var(--gold);
+    text-decoration: none;
+    border-bottom: 1px solid var(--gold-rule);
+    padding-bottom: 2px;
+    transition: border-color 0.2s;
+    align-self: flex-start;
+  }
+  .format-link:hover { border-color: var(--gold); }
+
+  /* ── THE UPGRADE SECTION ── */
+  .upgrade {
+    max-width: 900px;
+    margin: 0 auto 100px;
+    padding: 0 48px;
+    position: relative;
+    z-index: 1;
+  }
+  .upgrade-inner {
+    background: var(--bg2);
+    border: 1px solid var(--gold-rule);
+    padding: 64px 56px;
+    position: relative;
+    overflow: hidden;
+    text-align: center;
+  }
+  .upgrade-inner::before {
+    content: '';
+    position: absolute;
+    top: -100px; right: -100px;
+    width: 350px; height: 350px;
+    background: radial-gradient(circle, rgba(201,168,76,0.07) 0%, transparent 65%);
+    pointer-events: none;
+  }
+  .upgrade-inner::after {
+    content: '';
+    position: absolute;
+    bottom: -100px; left: -100px;
+    width: 300px; height: 300px;
+    background: radial-gradient(circle, rgba(201,168,76,0.04) 0%, transparent 65%);
+    pointer-events: none;
+  }
+  .upgrade-eyebrow {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 20px;
+  }
+  .upgrade-heading {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(2rem, 4vw, 3.2rem);
+    font-weight: 300;
+    line-height: 1.15;
+    margin-bottom: 16px;
+  }
+  .upgrade-heading em { font-style: italic; color: var(--gold); }
+  .upgrade-sub {
+    font-size: 0.95rem;
+    color: var(--text-mid);
+    max-width: 480px;
+    margin: 0 auto 36px;
+    line-height: 1.7;
+    font-weight: 300;
+  }
+  .upgrade-features {
+    display: flex;
+    justify-content: center;
+    gap: 32px;
+    flex-wrap: wrap;
+    margin-bottom: 40px;
+  }
+  .upgrade-feat {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.1em;
+    color: var(--text-dim);
+    text-transform: uppercase;
+  }
+  .upgrade-feat::before {
+    content: '◈';
+    color: var(--gold);
+    font-size: 0.7rem;
+  }
+  .upgrade-price {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.1em;
+    color: var(--text-dim);
+    margin-top: 16px;
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    border-top: 1px solid var(--rule);
+    padding: 32px 48px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: relative;
+    z-index: 1;
+  }
+  .footer-logo {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.1rem;
+    color: var(--gold);
+    text-decoration: none;
+  }
+  .footer-links { display: flex; gap: 24px; }
+  .footer-links a {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .footer-links a:hover { color: var(--text-mid); }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .reveal {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 768px) {
+    nav { padding: 16px 24px; }
+    .nav-links { display: none; }
+    .hero { padding: 100px 24px 60px; }
+    .preview-wrap, .features, .formats, .upgrade { padding-left: 24px; padding-right: 24px; }
+    .features-grid { grid-template-columns: 1fr; gap: 2px; }
+    .formats-grid { grid-template-columns: 1fr; }
+    .upgrade-inner { padding: 40px 28px; }
+    .upgrade-features { gap: 16px; }
+    footer { flex-direction: column; gap: 16px; text-align: center; }
+    .preview-inner { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav id="nav">
+  <a href="#" class="nav-logo">DayBrain</a>
+  <div class="nav-links">
+    <a href="#whats-inside">What's inside</a>
+    <a href="#formats">Formats</a>
+    <a href="https://daybra.in" target="_blank" class="nav-cta">Try DayBrain Free</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-eyebrow">Free Daily Planning Template</div>
+  <h1 class="hero-title">Plan your day<br>in <em>5 minutes.</em></h1>
+  <p class="hero-sub">A focused daily planning template built around the non-negotiables, top 3 priorities, and evening review framework. Interactive web app + printable PDF. Free, forever.</p>
+  <div class="hero-actions">
+    <a href="template.html" class="btn-primary">Open Interactive Template →</a>
+    <a href="daybrain-daily-planner.pdf" download class="btn-secondary">Download PDF</a>
+  </div>
+  <div class="hero-footnote">No account needed &nbsp;·&nbsp; No email required &nbsp;·&nbsp; Just use it</div>
+</section>
+
+<!-- PREVIEW MOCKUP -->
+<div class="preview-wrap">
+  <div class="preview-frame">
+    <div class="preview-inner">
+      <!-- Left col -->
+      <div class="preview-block">
+        <div class="preview-label">Non-Negotiables</div>
+        <div class="preview-row">
+          <div class="preview-box-sq"></div>
+          <div class="preview-line short gold-line"></div>
+        </div>
+        <div class="preview-row">
+          <div class="preview-box-sq"></div>
+          <div class="preview-line short"></div>
+        </div>
+        <br>
+        <div class="preview-label">Top 3 Priorities</div>
+        <div class="preview-row gold">
+          <div style="font-family:'DM Mono',monospace;font-size:0.6rem;color:rgba(201,168,76,0.4);min-width:14px">1</div>
+          <div style="flex:1"><div class="preview-line gold-line" style="margin-bottom:4px"></div><div class="preview-line" style="height:5px;flex:0 0 55%"></div></div>
+          <div class="preview-box-sq"></div>
+        </div>
+        <div class="preview-row">
+          <div style="font-family:'DM Mono',monospace;font-size:0.6rem;color:rgba(255,255,255,0.12);min-width:14px">2</div>
+          <div style="flex:1"><div class="preview-line" style="margin-bottom:4px"></div><div class="preview-line" style="height:5px;flex:0 0 40%"></div></div>
+          <div class="preview-box-sq"></div>
+        </div>
+        <div class="preview-row">
+          <div style="font-family:'DM Mono',monospace;font-size:0.6rem;color:rgba(255,255,255,0.07);min-width:14px">3</div>
+          <div style="flex:1"><div class="preview-line" style="margin-bottom:4px"></div><div class="preview-line" style="height:5px;flex:0 0 30%"></div></div>
+          <div class="preview-box-sq"></div>
+        </div>
+        <br>
+        <div class="preview-label">Brain Dump</div>
+        <div class="preview-dump"></div>
+      </div>
+
+      <!-- Right col -->
+      <div class="preview-block">
+        <div class="preview-label">Time Blocks</div>
+        <div class="preview-time-row"><div class="preview-time">07:00</div><div class="preview-slot"></div></div>
+        <div class="preview-time-row"><div class="preview-time">08:00</div><div class="preview-slot"></div></div>
+        <div class="preview-time-row"><div class="preview-time">09:00</div><div class="preview-slot" style="background:rgba(201,168,76,0.07)"></div></div>
+        <div class="preview-time-row"><div class="preview-time">10:00</div><div class="preview-slot"></div></div>
+        <div class="preview-time-row"><div class="preview-time">11:00</div><div class="preview-slot"></div></div>
+        <div class="preview-time-row"><div class="preview-time">12:00</div><div class="preview-slot"></div></div>
+        <div class="preview-time-row"><div class="preview-time">13:00</div><div class="preview-slot"></div></div>
+        <div class="preview-time-row"><div class="preview-time">14:00</div><div class="preview-slot"></div></div>
+        <div class="preview-time-row"><div class="preview-time">15:00</div><div class="preview-slot"></div></div>
+        <br>
+        <div class="preview-label">Not Right Now</div>
+        <div class="preview-row"><div style="width:5px;height:5px;border-radius:50%;background:var(--text-dim);flex-shrink:0"></div><div class="preview-line"></div></div>
+        <div class="preview-row"><div style="width:5px;height:5px;border-radius:50%;background:var(--text-dim);flex-shrink:0"></div><div class="preview-line short"></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="section-divider"></div>
+
+<!-- WHAT'S INSIDE -->
+<section class="features" id="whats-inside">
+  <div class="features-eyebrow reveal">What's inside</div>
+  <h2 class="features-heading reveal">Everything a focused<br>day actually needs.</h2>
+  <div class="features-grid">
+    <div class="feature-card reveal">
+      <div class="feature-num">01</div>
+      <div class="feature-title">Non-Negotiables</div>
+      <div class="feature-desc">Your daily commitments — exercise, deep work, journalling — checked off before anything else gets in the way.</div>
+    </div>
+    <div class="feature-card reveal">
+      <div class="feature-num">02</div>
+      <div class="feature-title">Top 3 Priorities</div>
+      <div class="feature-desc">Three tasks ranked by what actually moves the needle. With space for context so future-you knows why it mattered.</div>
+    </div>
+    <div class="feature-card reveal">
+      <div class="feature-num">03</div>
+      <div class="feature-title">Time Blocks</div>
+      <div class="feature-desc">7am to 6pm. Fill in the blocks. Protect the deep work hours. See the day as a finite resource, not an endless list.</div>
+    </div>
+    <div class="feature-card reveal">
+      <div class="feature-num">04</div>
+      <div class="feature-title">Brain Dump</div>
+      <div class="feature-desc">Clear your head before you start. Everything that's swirling around — dump it here. Deal with it later. Start focused.</div>
+    </div>
+    <div class="feature-card reveal">
+      <div class="feature-num">05</div>
+      <div class="feature-title">Not Right Now</div>
+      <div class="feature-desc">A parking lot for tasks that come up mid-day but can't be dealt with immediately. Capture it, don't lose it, don't get derailed.</div>
+    </div>
+    <div class="feature-card reveal">
+      <div class="feature-num">06</div>
+      <div class="feature-title">Evening Review</div>
+      <div class="feature-desc">Wins, misses, one honest reflection, tomorrow's first move. Close the day cleanly. Head into tomorrow with a clear head.</div>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- FORMATS -->
+<section class="formats" id="formats">
+  <div class="features-eyebrow reveal" style="text-align:center">Two formats, one framework</div>
+  <h2 class="features-heading reveal">Use it however<br>you work.</h2>
+  <div class="formats-grid">
+    <div class="format-card reveal">
+      <div class="format-icon">⌨</div>
+      <div class="format-title">Interactive Web App</div>
+      <div class="format-desc">Open in any browser. Click to check off tasks, type directly into every field, add Not Right Now items on the fly. Date auto-populates. No sign-in, no account.</div>
+      <div class="format-tags">
+        <span class="tag">Works in browser</span>
+        <span class="tag">No account</span>
+        <span class="tag">Fully interactive</span>
+      </div>
+      <a href="template.html" class="format-link">Open web template →</a>
+    </div>
+    <div class="format-card reveal">
+      <div class="format-icon">⎙</div>
+      <div class="format-title">Printable A4 PDF</div>
+      <div class="format-desc">Two pages. Morning plan on page one, evening review on page two. Print one per day, or fill in digitally with any PDF annotator. Optimised for A4.</div>
+      <div class="format-tags">
+        <span class="tag">A4 print-ready</span>
+        <span class="tag">2 pages</span>
+        <span class="tag">PDF annotator friendly</span>
+      </div>
+      <a href="daybrain-daily-planner.pdf" download class="format-link">Download PDF →</a>
+    </div>
+  </div>
+</section>
+
+<!-- UPGRADE / CTA -->
+<section class="upgrade">
+  <div class="upgrade-inner reveal">
+    <div class="upgrade-eyebrow">Want it done automatically?</div>
+    <h2 class="upgrade-heading">DayBrain fills this in<br>for you — <em>every morning.</em></h2>
+    <p class="upgrade-sub">A 5-minute AI conversation replaces this template. It asks what's on your plate, checks your calendar, prioritises your tasks, and builds your plan automatically. Every evening it reviews the day with you.</p>
+    <div class="upgrade-features">
+      <div class="upgrade-feat">AI Morning Planning</div>
+      <div class="upgrade-feat">Calendar Sync</div>
+      <div class="upgrade-feat">Evening Review</div>
+      <div class="upgrade-feat">The Dig — Search Your History</div>
+      <div class="upgrade-feat">Mind Dump</div>
+      <div class="upgrade-feat">Web &amp; Android</div>
+    </div>
+    <a href="https://daybra.in" target="_blank" class="btn-primary">Start your free 7-day trial →</a>
+    <div class="upgrade-price">No payment details required &nbsp;·&nbsp; £3.99/month after trial &nbsp;·&nbsp; Cancel anytime</div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <a href="https://daybra.in" target="_blank" class="footer-logo">DayBrain</a>
+  <div class="footer-links">
+    <a href="template.html">Web Template</a>
+    <a href="daybrain-daily-planner.pdf" download>PDF</a>
+    <a href="https://daybra.in" target="_blank">daybra.in</a>
+    <a href="https://daybra.in/privacy.html" target="_blank">Privacy</a>
+  </div>
+</footer>
+
+<script>
+  // Sticky nav
+  const nav = document.getElementById('nav');
+  window.addEventListener('scroll', () => {
+    nav.classList.toggle('scrolled', window.scrollY > 40);
+  });
+
+  // Scroll reveal
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((e, i) => {
+      if (e.isIntersecting) {
+        setTimeout(() => e.target.classList.add('visible'), i * 80);
+        observer.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.1 });
+  reveals.forEach(el => observer.observe(el));
+</script>
+</body>
+</html>
