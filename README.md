@@ -2,7 +2,7 @@
 
 A focused daily planning template for solo professionals, freelancers and founders. Built around the 5-minute planning framework.
 
-**[→ Open the interactive template](https://daybrain.github.io/daily-planner-template)**
+**[→ Open the interactive template](https://gmhsource-lab.github.io/DayBrain-5-Minute-Daily-Planner-Template/)**
 
 ---
 
